@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Management</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<button id="sendData">Send Data</button>
+<input type="number" id="recordId" placeholder="Enter Record ID">
+<button id="getRecord">Get Record</button>
+<button id="deleteRecord">Delete Record</button>
+<div id="recordDisplay"></div>
+
+<script>
+$(document).ready(function() {
+    // Send data AJAX call
+    $('#sendData').on('click', function() {
+        const dataToSend = {
+            name: 'John Doe',
+            age: 30
+        };
+
+        $.ajax({
+            url: 'write_data.php',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(dataToSend),
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error: ', status, error);
+            }
+        });
+    });
+
+    // Get record AJAX call
+    $('#getRecord').on('click', function() {
+        const recordId = $('#recordId').val();
+        
+        $.ajax({
+            url: `get_record.php?id=${recordId}`,
+            type: 'GET',
+            success: function(response) {
+                if (response.status === 'success') {
+                    $('#recordDisplay').html(`Record: ${JSON.stringify(response.record)}`);
+                } else {
+                    $('#recordDisplay').html(`Error: ${response.message}`);
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error: ', status, error);
+            }
+        });
+    });
+
+    // Delete record AJAX call
+    $('#deleteRecord').on('click', function() {
+        const recordId = $('#recordId').val();
+
+        $.ajax({
+            url: `delete_record.php?id=${recordId}`,
+            type: 'GET',
+            success: function(response) {
+                $('#recordDisplay').html(`Response: ${response.message}`);
+            },
+            error: function(xhr, status, error) {
+                console.error('AJAX Error: ', status, error);
+            }
+        });
+    });
+});
+</script>
+
+</body>
+</html>
